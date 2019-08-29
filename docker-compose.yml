@@ -5,7 +5,24 @@ services:
     container_name: theater_db
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: qwer1234
+      MONGO_DATABASE: theaters
+      MONGO_USERNAME: root
+      MONGO_PASSWORD: qwer1234
+      MONGO_ROLE: readWrite
     ports:
       - 6001:27017
+    volumes:
+      - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+  movie_db:
+    image: mongo
+    container_name: movie_db
+    restart: always
+    environment:
+      MONGO_DATABASE: movie
+      MONGO_USERNAME: root
+      MONGO_PASSWORD: qwer1234
+      MONGO_ROLE: readWrite
+    ports:
+      - 5001:27017
+    volumes:
+      - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
