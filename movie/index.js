@@ -1,18 +1,34 @@
-const { ServiceBroker } = require('moleculer')
+const { Kafka } = require('kafkajs')
 const mongoose = require('mongoose')
-const broker = new ServiceBroker()
 
 mongoose.connect('mongodb://root:qwer1234@localhost:5001/movie', { useNewUrlParser: true })
 
-broker.createService({
-  'name': 'movie',
-  'actions': {
-
-  }
+const kafka = new Kafka({
+  clientId: 'movie',
+  brokers: ['localhost:9092']
 })
 
+async function run() {
+  const consumer = kafka.consumer({ groupId: 'movies' })
+  const producer = kafka.producer()
 
-broker
-  .start()
-  .catch(console.error)
+  await producer.connect()
+  await consumer.connect()
 
+  consumer.subscribe({ topic: 'search-movies' })
+
+  await consumer.run({
+    eachMessage: async ({ topic, partition, message }) => {
+      console.log(message.value.toString())
+
+      producer.send({
+        'topic': 'movies-receiver',
+        'messages': [
+          { value: `ALL MOVIES` }
+        ]
+      })
+    }
+  })
+}
+
+run().catch(console.error)

@@ -7,7 +7,7 @@
     "start": "nodemon server.js"
   },
   "dependencies": {
-    "moleculer": "^0.13.10",
+    "kafkajs": "^1.10.0",
     "mongoose": "^5.6.11"
   }
 }
