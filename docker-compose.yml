@@ -14,7 +14,7 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: localhost
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "search-movies:1:1,movies-receiver:1:1"
+      KAFKA_CREATE_TOPICS: "search-movies:1:1,movies-receiver:1:1search-locations:1:1,locations-receiver:1:1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -37,7 +37,7 @@ services:
     container_name: movie_db
     restart: always
     environment:
-      MONGO_DATABASE: movie
+      MONGO_DATABASE: movies
       MONGO_USERNAME: root
       MONGO_PASSWORD: qwer1234
       MONGO_ROLE: readWrite
@@ -45,3 +45,19 @@ services:
       - 5001:27017
     volumes:
       - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+
+  locations_db:
+    image: mongo
+    container_name: locations_db
+    restart: always
+    environment:
+      MONGO_DATABASE: locations
+      MONGO_USERNAME: root
+      MONGO_PASSWORD: qwer1234
+      MONGO_ROLE: readWrite
+    ports:
+      - 7001:27017
+    volumes:
+      - ./scripts/locations_storage:/opt/storage
+      - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/01_init_db.sh
+      - ./scripts/populate_db.js:/docker-entrypoint-initdb.d/02_populate_db.js

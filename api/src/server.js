@@ -6,7 +6,7 @@ const { Kafka, logLevel } = require('kafkajs')
 mongoose.connect('mongodb://root:qwer1234@localhost:6001/theaters', { useNewUrlParser: true })
 
 const kafka = new Kafka({
-  clientId: 'theater',
+  clientId: 'theater-service',
   brokers: ['localhost:9092'],
 })
 
@@ -30,16 +30,32 @@ app.get('/theater', (req, res) => {
   })
 })
 
+app.get('/locations', (req, res) => {
+
+  producer.send({
+    'topic': 'search-locations',
+    'messages': [
+      { value: 'BOMBO' }
+    ]
+  })
+
+  return res.json({
+    run: true,
+    name: 'theater-service'
+  })
+})
+
 async function run() {
 
   await producer.connect()
   await consumer.connect()
 
   consumer.subscribe({ topic: 'movies-receiver' })
+  consumer.subscribe({ topic: 'locations-receiver' })
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
-      console.log(message.value.toString())
+      console.log(topic, message.value.toString())
     }
   })
 

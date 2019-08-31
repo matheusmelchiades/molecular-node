@@ -1,30 +1,30 @@
 const { Kafka } = require('kafkajs')
 const mongoose = require('mongoose')
 
-mongoose.connect('mongodb://root:qwer1234@localhost:5001/movies', { useNewUrlParser: true })
+mongoose.connect('mongodb://root:qwer1234@localhost:7001/locations', { useNewUrlParser: true })
 
 const kafka = new Kafka({
-  clientId: 'movie-service',
+  clientId: 'location-service',
   brokers: ['localhost:9092']
 })
 
 async function run() {
-  const consumer = kafka.consumer({ groupId: 'movies' })
+  const consumer = kafka.consumer({ groupId: 'locations' })
   const producer = kafka.producer()
 
   await producer.connect()
   await consumer.connect()
 
-  consumer.subscribe({ topic: 'search-movies' })
+  consumer.subscribe({ topic: 'search-locations' })
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       console.log(message.value.toString())
 
       producer.send({
-        'topic': 'movies-receiver',
+        'topic': 'locations-receiver',
         'messages': [
-          { value: `ALL MOVIES` }
+          { value: `ALL LOCATIONS` }
         ]
       })
     }
