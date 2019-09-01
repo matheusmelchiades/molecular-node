@@ -8,5 +8,7 @@
 
 [X] create ecosystem pm2
 
-[] criar storage json de movies
-[] popular database movies
+[X] criar storage json de movies
+[X] popular database movies
+
+[] create models services

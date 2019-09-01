@@ -44,7 +44,8 @@ services:
     ports:
       - 5001:27017
     volumes:
-      - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+      - ./scripts/movies_storage:/opt/storage
+      - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/01_init_db.sh
 
   locations_db:
     image: mongo
@@ -60,4 +61,3 @@ services:
     volumes:
       - ./scripts/locations_storage:/opt/storage
       - ./scripts/init_db.sh:/docker-entrypoint-initdb.d/01_init_db.sh
-      - ./scripts/populate_db.js:/docker-entrypoint-initdb.d/02_populate_db.js
