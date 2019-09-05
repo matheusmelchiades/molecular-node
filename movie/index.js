@@ -21,10 +21,15 @@ async function run() {
     eachMessage: async ({ topic, partition, message }) => {
       console.log(message.value.toString())
 
+      const schema = new mongoose.Schema({}, { strict: false })
+      const model = mongoose.model('movies', schema)
+
+      const data = await model.find()
+
       producer.send({
         'topic': 'movies-receiver',
         'messages': [
-          { value: `ALL MOVIES` }
+          { value: JSON.stringify(data) }
         ]
       })
     }
